@@ -10,6 +10,7 @@ import Contact from './ContactComponent';
 import { COMMENTS } from '../shared/comments';
 import { PROMOTIONS } from '../shared/promotions';
 import { LEADERS } from '../shared/leader';
+import About from "./AboutComponent";
 class Main extends Component {
 
   constructor(props) {
@@ -42,14 +43,24 @@ class Main extends Component {
               />
           );
       }
+      const AboutPage= ()=> {
+          return (
+              <About
+                  leaders={this.state.leaders}
+                  leaderDetails={this.state.leaders.filter((leader) => leader.description)}
+              />
+          );
+
+      }
     return (
       <div>
           <Header />
           <Switch>
               <Route path='/home' component={HomePage} />
               <Route exact path='/menu' component={() => <Menu dishes={this.state.dishes} />} />
-              <Route exact path='/contactus' component={Contact} />} />
               <Route path='/menu/:dishId' component={DishWithId} />
+              <Route exact path='/contactus' component={Contact} />} />
+              <Route exact path='/aboutus' component={AboutPage} />} />
               <Redirect to="/home" />
 
           </Switch>

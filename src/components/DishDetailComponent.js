@@ -1,7 +1,121 @@
-import React from 'react';
-import { Card, CardImg, CardText, CardBody,
-    CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React, {Component} from 'react';
+import {
+    Card,
+    CardImg,
+    CardText,
+    CardBody,
+    CardTitle,
+    Breadcrumb,
+    BreadcrumbItem,
+    Modal,
+    ModalHeader,
+    ModalBody,
+
+    Label,
+
+    Button,
+
+    Row, Col
+} from 'reactstrap';
 import { Link } from 'react-router-dom';
+import {Control, Errors, LocalForm} from "react-redux-form";
+
+const required = (val) => val && val.length;
+const maxLength = (len) => (val) => !(val) || (val.length <= len);
+const minLength = (len) => (val) => val && (val.length >= len);
+class CommentForm extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+
+            isModalOpen: false
+        };
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+    }
+
+    handleSubmit(values) {
+        console.log('Current State is: ' + JSON.stringify(values));
+        alert('Current State is: ' + JSON.stringify(values));
+        // event.preventDefault();
+    }
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        });
+    }
+    render() {
+        return (
+            <div>
+
+                <Button outline onClick={this.toggleModal}><span className="fa fa-pencil fa-lg"></span> Submit comment</Button>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+                    <ModalBody>
+                        <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+                            <Row className="form-group">
+                                <Label className="ml-3" htmlFor="rating" sm={2}>Rating</Label>
+
+                                    <Control.select model=".rating" name="rating"
+                                                    className="form-control m-3">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+
+                                    </Control.select>
+
+                            </Row>
+                            <Row className="form-group">
+                                <Label className="ml-3"  htmlFor="yourName" >Your Name</Label>
+
+                                    <Control.text model=".yourName" id="yourName" name="yourName"
+                                                  placeholder="Your Name"
+                                                  className="form-control m-3"
+                                                  validators={{
+                                                      required, minLength: minLength(3), maxLength: maxLength(15)
+                                                  }}
+                                    />
+                                    <Errors
+                                        className="text-danger"
+                                        model=".lastname"
+                                        show="touched"
+                                        messages={{
+                                            required: 'Required',
+                                            minLength: 'Must be greater than 2 characters',
+                                            maxLength: 'Must be 15 characters or less'
+                                        }}
+                                    />
+
+                            </Row>
+
+                            <Row className="form-group">
+                                <Label  className="ml-3" htmlFor="comment" >Comment</Label>
+
+                                    <Control.textarea model=".comment" id="comment" name="comment"
+                                                      rows="6"
+                                                      className="form-control m-3" />
+
+                            </Row>
+                            <Row className="form-group">
+                                <Col md={{size:10, }}>
+                                    <Button type="submit" color="primary">
+                                       submit
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
+
+            </div>
+        );
+    }
+}
 
 const  RenderDish=(dish)=> {
 
@@ -26,7 +140,7 @@ const  RenderComments=(comments) =>{
     if (comments != null) {
         return(
             <div className="">
-                <h4>Comments</h4>
+                <h4>Comments </h4>
 
                 { comments.comments.map((cm) => {
                     return (
@@ -38,6 +152,7 @@ const  RenderComments=(comments) =>{
                         </ul>
                     )
                 })}
+
             </div>
         )
 
@@ -54,6 +169,16 @@ const  RenderComments=(comments) =>{
 
 
 const  DishDetails = (props)=>{
+
+   let isModalOpen = false;
+
+   const toggleModal=()=> {
+
+            isModalOpen= !isModalOpen;
+            return isModalOpen;
+
+    }
+
     return (
         <div className="container">
             <div className="row">
@@ -73,7 +198,9 @@ const  DishDetails = (props)=>{
                 </div>
                 <div className="col-12 col-md-5 m-1">
                     <RenderComments comments={props.comments} />
+                  <CommentForm />
                 </div>
+
             </div>
         </div>
     );
